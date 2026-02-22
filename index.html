@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>征途荣耀储值中心</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#111,#1c1c1c,#000);
+  color:#fff;
+}
+
+.container{
+  width:420px;
+  margin:50px auto;
+  padding:30px;
+  background:#1a1a1a;
+  border-radius:15px;
+  box-shadow:0 0 30px rgba(255,215,0,0.2);
+}
+
+h2{
+  text-align:center;
+  color:#ffd700;
+  margin-bottom:25px;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:8px;
+  background:#2c2c2c;
+  color:#fff;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ffd700,#ffae00);
+  color:#000;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px gold;
+}
+
+button:disabled{
+  background:#555;
+  cursor:not-allowed;
+}
+
+.notice{
+  margin-top:20px;
+  font-size:13px;
+  color:#aaa;
+  text-align:center;
+}
+
+.success{
+  text-align:center;
+  margin-top:15px;
+  color:#00ff99;
+  display:none;
+}
+
+.error{
+  text-align:center;
+  margin-top:15px;
+  color:#ff4444;
+  display:none;
+}
+
+.ranking{
+  margin-top:30px;
+  padding:15px;
+  background:#111;
+  border-radius:10px;
+  border:1px solid gold;
+}
+
+.ranking h3{
+  color:#ffd700;
+  text-align:center;
+}
+
+.rank-item{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px solid #333;
+}
+
+.loading{
+  text-align:center;
+  font-size:12px;
+  color:#999;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🔥 征途开服冲刺储值</h2>
+
+<input id="account" placeholder="帐号 (邮箱)">
+<input id="role" placeholder="游戏角色名">
+
+<select id="package">
+  <option>500 首储礼包</option>
+  <option>1000 魂魄石礼包</option>
+  <option>1500 冲锋礼包</option>
+  <option>3000 进阶礼包</option>
+  <option>5000 豪华礼包</option>
+  <option>10000 巅峰礼包</option>
+</select>
+
+<button id="submitBtn" onclick="submitForm()">立即提交</button>
+
+<div class="success" id="successMsg">
+  ✔ 提交成功，请完成银行转帐并等待审核
+</div>
+
+<div class="error" id="errorMsg"></div>
+
+<div class="notice">
+  银行转帐完成后系统将人工审核<br>
+  审核时间约 5~30 分钟
+</div>
+
+<div class="ranking">
+  <h3>🏆 当前冲榜前三名</h3>
+  <div class="rank-item">
+    <span>🥇 第一名</span>
+    <span id="rank1">加载中...</span>
+  </div>
+  <div class="rank-item">
+    <span>🥈 第二名</span>
+    <span id="rank2">加载中...</span>
+  </div>
+  <div class="rank-item">
+    <span>🥉 第三名</span>
+    <span id="rank3">加载中...</span>
+  </div>
+  <div class="loading" id="loadingText">正在加载排行...</div>
+</div>
+
+</div>
+
+<script>
+
+const API = "https://script.google.com/macros/s/AKfycbyNfr3hZlLt6OrPFFcSbtcpT2SbxMBcklGLHdxdSUTtdDg_HUBySU8Xg3i0tIuKwD67/exec";
+
+function submitForm(){
+
+  const account = document.getElementById("account").value.trim();
+  const role = document.getElementById("role").value.trim();
+  const pkg = document.getElementById("package").value;
+
+  if(!account || !role){
+    showError("请填写帐号与角色名");
+    return;
+  }
+
+  document.getElementById("submitBtn").disabled = true;
+
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      account:account,
+      role:role,
+      package:pkg
+    })
+  })
+  .then(res=>res.text())
+  .then(res=>{
+    if(res==="success"){
+      document.getElementById("successMsg").style.display="block";
+      loadRanking();
+    }else{
+      showError(res);
+    }
+    document.getElementById("submitBtn").disabled=false;
+  })
+  .catch(()=>{
+    showError("提交失败，请稍后再试");
+    document.getElementById("submitBtn").disabled=false;
+  });
+}
+
+function showError(msg){
+  const err = document.getElementById("errorMsg");
+  err.innerText = msg;
+  err.style.display="block";
+}
+
+function loadRanking(){
+  fetch(API + "?type=ranking")
+  .then(res=>res.json())
+  .then(data=>{
+    document.getElementById("loadingText").style.display="none";
+
+    if(data[0]) document.getElementById("rank1").innerText = data[0].account + " - " + data[0].total;
+    if(data[1]) document.getElementById("rank2").innerText = data[1].account + " - " + data[1].total;
+    if(data[2]) document.getElementById("rank3").innerText = data[2].account + " - " + data[2].total;
+  });
+}
+
+loadRanking();
+
+</script>
+
+</body>
+</html>
