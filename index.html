@@ -1,226 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
-<title>征途荣耀储值中心</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>征途榮耀官方儲值中心</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#111,#1c1c1c,#000);
+  font-family:Arial, Helvetica, sans-serif;
+  background:#0f1116;
   color:#fff;
 }
-
 .container{
-  width:420px;
-  margin:50px auto;
+  max-width:1000px;
+  margin:auto;
   padding:30px;
-  background:#1a1a1a;
-  border-radius:15px;
-  box-shadow:0 0 30px rgba(255,215,0,0.2);
 }
-
-h2{
-  text-align:center;
+h1{
   color:#ffd700;
-  margin-bottom:25px;
 }
-
-input, select{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:8px;
-  background:#2c2c2c;
-  color:#fff;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  margin-top:15px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(45deg,#ffd700,#ffae00);
-  color:#000;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 15px gold;
-}
-
-button:disabled{
-  background:#555;
-  cursor:not-allowed;
-}
-
-.notice{
+.section{
+  background:#1a1f2a;
+  padding:20px;
+  border-radius:12px;
   margin-top:20px;
-  font-size:13px;
-  color:#aaa;
-  text-align:center;
 }
-
-.success{
-  text-align:center;
-  margin-top:15px;
-  color:#00ff99;
-  display:none;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:15px;
 }
-
-.error{
-  text-align:center;
-  margin-top:15px;
-  color:#ff4444;
-  display:none;
-}
-
-.ranking{
-  margin-top:30px;
+.card{
+  background:#222836;
   padding:15px;
-  background:#111;
   border-radius:10px;
-  border:1px solid gold;
 }
-
-.ranking h3{
+.card h3{
+  margin:5px 0;
+}
+.price{
+  font-size:20px;
   color:#ffd700;
-  text-align:center;
 }
-
-.rank-item{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  border-bottom:1px solid #333;
+.reward{
+  font-size:14px;
+  margin-top:5px;
+  color:#ccc;
 }
-
-.loading{
-  text-align:center;
-  font-size:12px;
-  color:#999;
+.btn{
+  width:100%;
+  padding:10px;
+  background:linear-gradient(45deg,#ffd700,#ffae00);
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
   margin-top:10px;
+}
+input{
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+  border:none;
+  border-radius:6px;
+}
+.progress{
+  height:20px;
+  background:#333;
+  border-radius:10px;
+  overflow:hidden;
+}
+.bar{
+  height:100%;
+  background:gold;
+  width:0%;
+}
+.reward-item{
+  margin:5px 0;
+}
+.record-item{
+  font-size:14px;
+  margin:4px 0;
+  color:#ccc;
+}
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<h2>🔥 征途开服冲刺储值</h2>
+<h1>🔥 征途榮耀官方儲值中心</h1>
 
-<input id="account" placeholder="帐号 (邮箱)">
-<input id="role" placeholder="游戏角色名">
-
-<select id="package">
-  <option>500 首储礼包</option>
-  <option>1000 魂魄石礼包</option>
-  <option>1500 冲锋礼包</option>
-  <option>3000 进阶礼包</option>
-  <option>5000 豪华礼包</option>
-  <option>10000 巅峰礼包</option>
-</select>
-
-<button id="submitBtn" onclick="submitForm()">立即提交</button>
-
-<div class="success" id="successMsg">
-  ✔ 提交成功，请完成银行转帐并等待审核
+<div class="section">
+<h2>帳號資訊</h2>
+<input id="account" placeholder="請輸入帳號 (Email)">
+<input id="role" placeholder="請輸入角色名稱">
+<input id="bankLast5" placeholder="請輸入匯款帳號後5碼">
 </div>
 
-<div class="error" id="errorMsg"></div>
-
-<div class="notice">
-  银行转帐完成后系统将人工审核<br>
-  审核时间约 5~30 分钟
+<div class="section">
+<h2>💰 金額儲值</h2>
+<div class="grid" id="amountGrid"></div>
 </div>
 
-<div class="ranking">
-  <h3>🏆 当前冲榜前三名</h3>
-  <div class="rank-item">
-    <span>🥇 第一名</span>
-    <span id="rank1">加载中...</span>
-  </div>
-  <div class="rank-item">
-    <span>🥈 第二名</span>
-    <span id="rank2">加载中...</span>
-  </div>
-  <div class="rank-item">
-    <span>🥉 第三名</span>
-    <span id="rank3">加载中...</span>
-  </div>
-  <div class="loading" id="loadingText">正在加载排行...</div>
+<div class="section">
+<h2>🎁 累積儲值</h2>
+<div>目前累計：<span id="total">0</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="rewardList"></div>
+</div>
+
+<div class="section">
+<h2>📜 最新儲值紀錄</h2>
+<div id="recordList"></div>
 </div>
 
 </div>
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbyNfr3hZlLt6OrPFFcSbtcpT2SbxMBcklGLHdxdSUTtdDg_HUBySU8Xg3i0tIuKwD67/exec";
+const API_URL = "你的AppsScript網址";
 
-function submitForm(){
+let selectedAmountData = null;
 
-  const account = document.getElementById("account").value.trim();
-  const role = document.getElementById("role").value.trim();
-  const pkg = document.getElementById("package").value;
+// ========================
+// 載入金額選項
+// ========================
+function loadAmounts(){
+  fetch(API_URL + "?type=amounts")
+  .then(res=>res.json())
+  .then(data=>{
+    let html="";
+    data.forEach(item=>{
+      html+=`
+      <div class="card">
+        <h3>${item.name}</h3>
+        <div class="price">${item.amount} 元</div>
+        <div class="reward">獲得：${item.reward}</div>
+        <button class="btn"
+          onclick='selectAmount(${JSON.stringify(item)})'>
+          選擇此方案
+        </button>
+      </div>
+      `;
+    });
+    document.getElementById("amountGrid").innerHTML = html;
+  });
+}
 
-  if(!account || !role){
-    showError("请填写帐号与角色名");
+// ========================
+// 選擇金額
+// ========================
+function selectAmount(item){
+  selectedAmountData = item;
+  alert("已選擇："+item.name+"\n獲得："+item.reward);
+}
+
+// ========================
+// 送出訂單
+// ========================
+function submitOrder(){
+
+  const account = document.getElementById("account").value;
+  const role = document.getElementById("role").value;
+  const bankLast5 = document.getElementById("bankLast5").value;
+
+  if(!selectedAmountData){
+    alert("請先選擇儲值金額");
     return;
   }
 
-  document.getElementById("submitBtn").disabled = true;
+  if(!account || !role || !bankLast5){
+    alert("請填寫完整資訊");
+    return;
+  }
 
-  fetch(API,{
+  fetch(API_URL,{
     method:"POST",
     body:JSON.stringify({
+      amountId:selectedAmountData.id,
       account:account,
       role:role,
-      package:pkg
+      bankLast5:bankLast5
     })
   })
-  .then(res=>res.text())
-  .then(res=>{
-    if(res==="success"){
-      document.getElementById("successMsg").style.display="block";
-      loadRanking();
-    }else{
-      showError(res);
-    }
-    document.getElementById("submitBtn").disabled=false;
-  })
-  .catch(()=>{
-    showError("提交失败，请稍后再试");
-    document.getElementById("submitBtn").disabled=false;
-  });
-}
-
-function showError(msg){
-  const err = document.getElementById("errorMsg");
-  err.innerText = msg;
-  err.style.display="block";
-}
-
-function loadRanking(){
-  fetch(API + "?type=ranking")
   .then(res=>res.json())
   .then(data=>{
-    document.getElementById("loadingText").style.display="none";
-
-    if(data[0]) document.getElementById("rank1").innerText = data[0].account + " - " + data[0].total;
-    if(data[1]) document.getElementById("rank2").innerText = data[1].account + " - " + data[1].total;
-    if(data[2]) document.getElementById("rank3").innerText = data[2].account + " - " + data[2].total;
+    if(data.status==="success"){
+      alert("訂單建立成功\n訂單編號："+data.orderId);
+      loadAll();
+    }else{
+      alert(data);
+    }
   });
 }
 
-loadRanking();
+// ========================
+// 累積儲值
+// ========================
+function loadTotal(){
+  const acc = document.getElementById("account").value;
+  if(!acc) return;
+
+  fetch(API_URL+"?type=total&account="+acc)
+  .then(res=>res.json())
+  .then(data=>{
+    document.getElementById("total").innerText = data.total;
+    document.getElementById("bar").style.width =
+      Math.min(data.total/50000*100,100)+"%";
+
+    let html="";
+    data.rewards.forEach(r=>{
+      html+=`<div class="reward-item">
+        ${r.amount} - ${r.reward}
+        ${r.reached?" ✅":" ❌"}
+      </div>`;
+    });
+    document.getElementById("rewardList").innerHTML = html;
+  });
+}
+
+// ========================
+// 最新儲值紀錄
+// ========================
+function loadRecords(){
+  fetch(API_URL+"?type=records")
+  .then(res=>res.json())
+  .then(data=>{
+    let html="";
+    data.forEach(r=>{
+      html+=`<div class="record-item">
+        金額：${r.amount} ｜ 狀態：${r.status}
+      </div>`;
+    });
+    document.getElementById("recordList").innerHTML = html;
+  });
+}
+
+// ========================
+// 初始化
+// ========================
+function loadAll(){
+  loadAmounts();
+  loadTotal();
+  loadRecords();
+}
+
+loadAll();
+
+// 監聽帳號輸入即時更新累積
+document.getElementById("account")
+  .addEventListener("blur",loadTotal);
 
 </script>
 
